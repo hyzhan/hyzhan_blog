@@ -1,0 +1,1009 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="python," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="用faster-rcnn训练自己的数据集">
+<meta name="keywords" content="python">
+<meta property="og:type" content="article">
+<meta property="og:title" content="用faster-rcnn训练自己的数据集(VOC2007格式,python版)">
+<meta property="og:url" content="http://hyzhan.github.io/2017/02/21/2017-02-21-用faster-rcnn训练自己的数据集(python版)/index.html">
+<meta property="og:site_name" content="hyzhan">
+<meta property="og:description" content="用faster-rcnn训练自己的数据集">
+<meta property="og:updated_time" content="2017-04-18T05:45:39.191Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="用faster-rcnn训练自己的数据集(VOC2007格式,python版)">
+<meta name="twitter:description" content="用faster-rcnn训练自己的数据集">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"hide","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://hyzhan.github.io/2017/02/21/2017-02-21-用faster-rcnn训练自己的数据集(python版)/"/>
+
+
+
+
+
+  <title> 用faster-rcnn训练自己的数据集(VOC2007格式,python版) | hyzhan </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">hyzhan</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://hyzhan.github.io/2017/02/21/2017-02-21-用faster-rcnn训练自己的数据集(python版)/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="hyzhan">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="hyzhan">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                用faster-rcnn训练自己的数据集(VOC2007格式,python版)
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-02-21T11:24:00+08:00">
+                2017-02-21
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/deep-learning/" itemprop="url" rel="index">
+                    <span itemprop="name">deep learning</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+              <div class="post-description">
+                  用faster-rcnn训练自己的数据集
+              </div>
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>用faster-rcnn训练自己的数据集(VOC2007格式,python版)</p>
+<a id="more"></a>
+<h2 id="一-配置caffe环境"><a href="#一-配置caffe环境" class="headerlink" title="一. 配置caffe环境"></a>一. 配置caffe环境</h2><p><a href="http://report.opsauto.cn/deep%20learning/2016/11/12/ubunt16.04%E4%B8%8Bcaffe%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85.html" target="_blank" rel="external">ubunt16.04下caffe环境安装</a></p>
+<h2 id="二-下载-编译及测试py-faster-rcnn源码"><a href="#二-下载-编译及测试py-faster-rcnn源码" class="headerlink" title="二. 下载,编译及测试py-faster-rcnn源码"></a>二. 下载,编译及测试py-faster-rcnn源码</h2><h3 id="一-下载源码"><a href="#一-下载源码" class="headerlink" title="(一)下载源码"></a>(一)下载源码</h3><p><a href="https://github.com/rbgirshick/py-faster-rcnn" target="_blank" rel="external">github链接</a></p>
+<p>或者执行 git clone –recursive <a href="https://github.com/rbgirshick/py-faster-rcnn.git" target="_blank" rel="external">https://github.com/rbgirshick/py-faster-rcnn.git</a></p>
+<p>注意加上–recursive关键字</p>
+<h3 id="二-编译源码"><a href="#二-编译源码" class="headerlink" title="(二)编译源码"></a>(二)编译源码</h3><p>编译过程中可能会出现缺失一些python模块,按提示安装</p>
+<h4 id="1-编译Cython模块"><a href="#1-编译Cython模块" class="headerlink" title="(1)编译Cython模块"></a>(1)编译Cython模块</h4><pre><code>cd $FRCN_ROOT/lib 
+make
+</code></pre><h4 id="2-修改Markfile配置"><a href="#2-修改Markfile配置" class="headerlink" title="(2)修改Markfile配置"></a>(2)修改Markfile配置</h4><p>参考<a href="http://report.opsauto.cn/deep%20learning/2016/11/12/ubunt16.04%E4%B8%8Bcaffe%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85.html" target="_blank" rel="external">ubunt16.04下caffe环境安装</a><br>中修改Makefile.config</p>
+<h4 id="3-编译python接口"><a href="#3-编译python接口" class="headerlink" title="(3)编译python接口"></a>(3)编译python接口</h4><pre><code>cd $FRCN_ROOT/caffe-fast-rcnn
+make -j8  多核编译,时间较长
+make pycaffe
+</code></pre><h4 id="4-下载训练好的VGG16和ZF模型"><a href="#4-下载训练好的VGG16和ZF模型" class="headerlink" title="(4)下载训练好的VGG16和ZF模型"></a>(4)下载训练好的VGG16和ZF模型</h4><pre><code>cd $FRCN_ROOT
+./data/scripts/fetch_faster_rcnn_models.sh
+</code></pre><p>时间太长的话可以考虑找网上别人分享的资源</p>
+<h3 id="三-测试源码"><a href="#三-测试源码" class="headerlink" title="(三)测试源码"></a>(三)测试源码</h3><pre><code>cd $FRCN_ROOT
+./tool/demo.py
+</code></pre><h2 id="三-使用faster-rcnn训练自己的数据集"><a href="#三-使用faster-rcnn训练自己的数据集" class="headerlink" title="三. 使用faster-rcnn训练自己的数据集"></a>三. 使用faster-rcnn训练自己的数据集</h2><h3 id="一-下载预训练参数及模型"><a href="#一-下载预训练参数及模型" class="headerlink" title="(一)下载预训练参数及模型"></a>(一)下载预训练参数及模型</h3><pre><code>cd $FRCN_ROOT
+./data/scripts/fetch_imagenet_models.sh
+./data/scripts/fetch_selective_search_data.sh
+</code></pre><h3 id="二-制作数据集"><a href="#二-制作数据集" class="headerlink" title="(二)制作数据集"></a>(二)制作数据集</h3><p><a href="http://report.opsauto.cn/deep%20learning/2017/02/08/%E5%88%B6%E4%BD%9C%E8%87%AA%E5%B7%B1%E7%9A%84%E5%9B%BE%E7%89%87%E6%95%B0%E6%8D%AE%E9%9B%86.html" target="_blank" rel="external">制作数据集(VOC2007格式)</a></p>
+<p>将制作好的VOC2007文件夹放置在data/VOCdevkit2007文件夹下,没有则新建VOCdevkit2007文件夹</p>
+<h3 id="三-修改配置文件"><a href="#三-修改配置文件" class="headerlink" title="(三)修改配置文件"></a>(三)修改配置文件</h3><h4 id="1-修改py-faster-rcnn-models-pascal-voc-ZF-faster-rcnn-alt-opt-stage1-fast-rcnn-train-pt和stage2-fast-rcnn-train-pt-两个文件"><a href="#1-修改py-faster-rcnn-models-pascal-voc-ZF-faster-rcnn-alt-opt-stage1-fast-rcnn-train-pt和stage2-fast-rcnn-train-pt-两个文件" class="headerlink" title="(1)修改py-faster-rcnn/models/pascal_voc/ZF/faster_rcnn_alt_opt/stage1_fast_rcnn_train.pt和stage2_fast_rcnn_train.pt 两个文件"></a>(1)修改py-faster-rcnn/models/pascal_voc/ZF/faster_rcnn_alt_opt/stage1_fast_rcnn_train.pt和stage2_fast_rcnn_train.pt 两个文件</h4><p>备注:3处修改及其附近的代码</p>
+<pre><code>name: &quot;ZF&quot;
+layer {
+  name: &apos;data&apos;
+  type: &apos;Python&apos;
+  top: &apos;data&apos;
+  top: &apos;rois&apos;
+  top: &apos;labels&apos;
+  top: &apos;bbox_targets&apos;
+  top: &apos;bbox_inside_weights&apos;
+  top: &apos;bbox_outside_weights&apos;
+  python_param {
+    module: &apos;roi_data_layer.layer&apos;
+    layer: &apos;RoIDataLayer&apos;
+    param_str: &quot;&apos;num_classes&apos;: 2&quot; #按训练集类别改，该值为类别数+1
+  }
+}
+
+layer {
+  name: &quot;cls_score&quot;
+  type: &quot;InnerProduct&quot;
+  bottom: &quot;fc7&quot;
+  top: &quot;cls_score&quot;
+  param { lr_mult: 1.0 }
+  param { lr_mult: 2.0 }
+  inner_product_param {
+    num_output: 2 #按训练集类别改，该值为类别数+1
+    weight_filler {
+      type: &quot;gaussian&quot;
+      std: 0.01
+    }
+    bias_filler {
+      type: &quot;constant&quot;
+      value: 0
+    }
+  }
+}
+
+layer {
+  name: &quot;bbox_pred&quot;
+  type: &quot;InnerProduct&quot;
+  bottom: &quot;fc7&quot;
+  top: &quot;bbox_pred&quot;
+  param { lr_mult: 1.0 }
+  param { lr_mult: 2.0 }
+  inner_product_param {
+    num_output: 8 #按训练集类别改，该值为（类别数+1）*4
+    weight_filler {
+      type: &quot;gaussian&quot;
+      std: 0.001
+    }
+    bias_filler {
+      type: &quot;constant&quot;
+      value: 0
+    }
+  }
+}
+</code></pre><h4 id="2-修改py-faster-rcnn-models-pascal-voc-ZF-faster-rcnn-alt-opt-stage1-rpn-train-pt和stage2-rpn-train-pt-两个文件"><a href="#2-修改py-faster-rcnn-models-pascal-voc-ZF-faster-rcnn-alt-opt-stage1-rpn-train-pt和stage2-rpn-train-pt-两个文件" class="headerlink" title="(2)修改py-faster-rcnn/models/pascal_voc/ZF/faster_rcnn_alt_opt/stage1_rpn_train.pt和stage2_rpn_train.pt 两个文件"></a>(2)修改py-faster-rcnn/models/pascal_voc/ZF/faster_rcnn_alt_opt/stage1_rpn_train.pt和stage2_rpn_train.pt 两个文件</h4><p>备注:1处修改及其附近的代码</p>
+<pre><code>layer {
+  name: &apos;input-data&apos;
+  type: &apos;Python&apos;
+  top: &apos;data&apos;
+  top: &apos;im_info&apos;
+  top: &apos;gt_boxes&apos;
+  python_param {
+    module: &apos;roi_data_layer.layer&apos;
+    layer: &apos;RoIDataLayer&apos;
+    param_str: &quot;&apos;num_classes&apos;: 2&quot; #按训练集类别改，该值为类别数+1
+  }
+}
+</code></pre><h4 id="3-修改py-faster-rcnn-models-pascal-voc-ZF-faster-rcnn-alt-opt-faster-rcnn-test-pt文件"><a href="#3-修改py-faster-rcnn-models-pascal-voc-ZF-faster-rcnn-alt-opt-faster-rcnn-test-pt文件" class="headerlink" title="(3)修改py-faster-rcnn/models/pascal_voc/ZF/faster_rcnn_alt_opt/faster_rcnn_test.pt文件"></a>(3)修改py-faster-rcnn/models/pascal_voc/ZF/faster_rcnn_alt_opt/faster_rcnn_test.pt文件</h4><p>备注:2处修改及其附近的代码</p>
+<pre><code>layer {
+  name: &quot;cls_score&quot;
+  type: &quot;InnerProduct&quot;
+  bottom: &quot;fc7&quot;
+  top: &quot;cls_score&quot;
+  param { lr_mult: 1.0 }
+  param { lr_mult: 2.0 }
+  inner_product_param {
+    num_output: 2 #按训练集类别改，该值为类别数+1
+    weight_filler {
+      type: &quot;gaussian&quot;
+      std: 0.01
+    }
+    bias_filler {
+      type: &quot;constant&quot;
+      value: 0
+    }
+  }
+}
+
+layer {
+  name: &quot;bbox_pred&quot;
+  type: &quot;InnerProduct&quot;
+  bottom: &quot;fc7&quot;
+  top: &quot;bbox_pred&quot;
+  param { lr_mult: 1.0 }
+  param { lr_mult: 2.0 }
+  inner_product_param {
+    num_output: 8 #按训练集类别改，该值为（类别数+1）*4
+    weight_filler {
+      type: &quot;gaussian&quot;
+      std: 0.001
+    }
+    bias_filler {
+      type: &quot;constant&quot;
+      value: 0
+    }
+  }
+}
+</code></pre><h4 id="4-修改py-faster-rcnn-lib-datasets-pascal-voc-py"><a href="#4-修改py-faster-rcnn-lib-datasets-pascal-voc-py" class="headerlink" title="(4)修改py-faster-rcnn/lib/datasets/pascal_voc.py"></a>(4)修改py-faster-rcnn/lib/datasets/pascal_voc.py</h4><pre><code>self._classes = (&apos;__background__&apos;, # always index 0
+                         &apos;你的标签1&apos;,&apos;你的标签2&apos;,你的标签3&apos;,&apos;你的标签4&apos;)
+
+注:如果只是在原始检测的20种类别:&apos;aeroplane&apos;, &apos;bicycle&apos;, &apos;bird&apos;, &apos;boat&apos;,&apos;bottle&apos;, &apos;bus&apos;, &apos;car&apos;, &apos;cat&apos;, &apos;chair&apos;,
+&apos;cow&apos;, &apos;diningtable&apos;, &apos;dog&apos;, &apos;horse&apos;,&apos;motorbike&apos;, &apos;person&apos;, &apos;pottedplant&apos;,
+&apos;sheep&apos;, &apos;sofa&apos;, &apos;train&apos;, &apos;tvmonitor&apos;中检测单一类别,可参考修改下面的代码:
+
+
+def _load_image_set_index(self):
+        &quot;&quot;&quot;
+        Load the indexes listed in this dataset&apos;s image set file.
+        &quot;&quot;&quot;
+        # Example path to image set file:
+        # self._devkit_path + /VOCdevkit2007/VOC2007/ImageSets/Main/val.txt
+        image_set_file = os.path.join(self._data_path, &apos;ImageSets&apos;, &apos;Main&apos;,
+                                      self._image_set + &apos;.txt&apos;)
+        assert os.path.exists(image_set_file), \
+                &apos;Path does not exist: {}&apos;.format(image_set_file)
+        with open(image_set_file) as f:
+            image_index = [x.strip() for x in f.readlines()]
+
+注:如果需要在原始的20类别只检测车辆的话才需要修改这部分代码.
+        # only load index with cars obj
+        new_image_index = []
+        for index in image_index:
+            filename = os.path.join(self._data_path, &apos;Annotations&apos;, index + &apos;.xml&apos;)
+            tree = ET.parse(filename)
+            objs = tree.findall(&apos;object&apos;)
+            num_objs = 0
+            for ix, obj in enumerate(objs):
+                curr_name = obj.find(&apos;name&apos;).text.lower().strip()
+                if curr_name == &apos;car&apos;:
+                    num_objs += 1
+                    break
+            if num_objs &gt; 0:
+                new_image_index.append(index)
+        return new_image_index
+
+def _load_pascal_annotation(self, index):
+        &quot;&quot;&quot;
+        Load image and bounding boxes info from XML file in the PASCAL VOC
+        format.
+        &quot;&quot;&quot;
+        filename = os.path.join(self._data_path, &apos;Annotations&apos;, index + &apos;.xml&apos;)
+        tree = ET.parse(filename)
+        objs = tree.findall(&apos;object&apos;)
+        if not self.config[&apos;use_diff&apos;]:
+            # Exclude the samples labeled as difficult
+            non_diff_objs = [
+                obj for obj in objs if int(obj.find(&apos;difficult&apos;).text) == 0]
+            # if len(non_diff_objs) != len(objs):
+            #     print &apos;Removed {} difficult objects&apos;.format(
+            #         len(objs) - len(non_diff_objs))
+            objs = non_diff_objs
+
+注:如果需要在原始的20类别只检测车辆的话才需要修改这部分代码.
+        # change num objs , only read car
+        # num_objs = len(objs)
+
+        num_objs = 0
+        for ix, obj in enumerate(objs):
+            curr_name = obj.find(&apos;name&apos;).text.lower().strip()
+            if curr_name == &apos;car&apos;:
+                num_objs += 1
+
+        boxes = np.zeros((num_objs, 4), dtype=np.uint16)
+        gt_classes = np.zeros((num_objs), dtype=np.int32)
+        overlaps = np.zeros((num_objs, self.num_classes), dtype=np.float32)
+        # &quot;Seg&quot; area for pascal is just the box area
+        seg_areas = np.zeros((num_objs), dtype=np.float32)
+
+#注:如果需要在原始的20类别只检测车辆的话才需要修改这部分代码
+# Load object bounding boxes into a data     frame.
+        tmp_ix = 0
+        for ix, obj in enumerate(objs):
+            bbox = obj.find(&apos;bndbox&apos;)
+            # Make pixel indexes 0-based
+            x1 = float(bbox.find(&apos;xmin&apos;).text) - 1
+            y1 = float(bbox.find(&apos;ymin&apos;).text) - 1
+            x2 = float(bbox.find(&apos;xmax&apos;).text) - 1
+            y2 = float(bbox.find(&apos;ymax&apos;).text) - 1
+            curr_name = obj.find(&apos;name&apos;).text.lower().strip()
+            if curr_name != &apos;car&apos;:
+                continue
+            cls = self._class_to_ind[curr_name]
+            boxes[tmp_ix, :] = [x1, y1, x2, y2]
+            gt_classes[tmp_ix] = cls
+            overlaps[tmp_ix, cls] = 1.0
+            seg_areas[tmp_ix] = (x2 - x1 + 1) * (y2 - y1 + 1)
+
+            tmp_ix += 1
+
+        overlaps = scipy.sparse.csr_matrix(overlaps)
+
+        return {&apos;boxes&apos; : boxes,
+                &apos;gt_classes&apos;: gt_classes,
+                &apos;gt_overlaps&apos; : overlaps,
+                &apos;flipped&apos; : False,
+                &apos;seg_areas&apos; : seg_areas}
+</code></pre><h4 id="4-py-faster-rcnn-lib-datasets-imdb-py修改"><a href="#4-py-faster-rcnn-lib-datasets-imdb-py修改" class="headerlink" title="(4)py-faster-rcnn/lib/datasets/imdb.py修改"></a>(4)py-faster-rcnn/lib/datasets/imdb.py修改</h4><pre><code>def append_flipped_images(self):
+        num_images = self.num_images
+        widths = [PIL.Image.open(self.image_path_at(i)).size[0]
+                  for i in xrange(num_images)]
+        for i in xrange(num_images):
+            boxes = self.roidb[i][&apos;boxes&apos;].copy()
+            oldx1 = boxes[:, 0].copy()
+            oldx2 = boxes[:, 2].copy()
+            boxes[:, 0] = widths[i] - oldx2 - 1
+            boxes[:, 2] = widths[i] - oldx1 - 1
+
+            for b in range(len(boxes)):
+                if boxes[b][2] &lt; boxes[b][0]:
+                   boxes[b][0] = 0
+
+            assert (boxes[:, 2] &gt;= boxes[:, 0]).all()
+</code></pre><h4 id="5-py-faster-rcnn-tools-train-faster-rcnn-alt-opt-py修改迭代次数（建议修改）"><a href="#5-py-faster-rcnn-tools-train-faster-rcnn-alt-opt-py修改迭代次数（建议修改）" class="headerlink" title="(5)py-faster-rcnn/tools/train_faster_rcnn_alt_opt.py修改迭代次数（建议修改）"></a>(5)py-faster-rcnn/tools/train_faster_rcnn_alt_opt.py修改迭代次数（建议修改）</h4><pre><code>max_iters=[8000,4000,8000,4000]
+建议:第一次训练使用较低的迭代次数,先确保能正常训练,如max_iters=[8,4,8,4]
+</code></pre><p>训练分别为4个阶段（rpn第1阶段，fast rcnn第1阶段，rpn第2阶段，fast rcnn第2阶段）的迭代次数。可改成你希望的迭代次数。<br>如果改了这些数值，最好把py-faster-rcnn/models/pascal_voc/ZF/faster_rcnn_alt_opt里对应的solver文件（有4个）也修改，stepsize小于上面修改的数值，stepsize的意义是经过stepsize次的迭代后降低一次学习率（非必要修改）。</p>
+<h4 id="6-删除缓存文件-每次修改配置文件后训练都要做"><a href="#6-删除缓存文件-每次修改配置文件后训练都要做" class="headerlink" title="(6)删除缓存文件(每次修改配置文件后训练都要做)"></a>(6)删除缓存文件(每次修改配置文件后训练都要做)</h4><pre><code>删除py-faster-rcnn文件夹下所有的.pyc文件及data文件夹下的cache文件夹,
+data/VOCdekit2007下的annotations_cache文件夹(最近一次成功训练的
+annotation和当前annotation一样的话这部分可以不删,否则可以正常训练,
+但是最后评价模型会出错)
+</code></pre><h3 id="四-开始训练"><a href="#四-开始训练" class="headerlink" title="(四)开始训练"></a>(四)开始训练</h3><pre><code>cd $FRCN_ROOT
+./experiments/scripts/faster_rcnn_alt_opt.sh 0 ZF pascal_voc
+</code></pre><p>成功训练后在py-faster-rcnn/output/faster_rcnn_alt_opt/voc_2007_trainval文件夹下<br>会有以final.caffemodel结尾的模型文件,一般为ZF_faster_rcnn_final.caffemodel</p>
+<p>成功训练后会有一次模型性能的评估测试,成功的话会有MAP指标和平均MAP指标的输出,类似下文,<br>训练日志文件保存在experiments/logs文件夹下.</p>
+<pre><code>Evaluating detections
+Writing car VOC results file
+VOC07 metric? Yes
+AP for car = 0.0090
+Mean AP = 0.0090
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">Results:</div><div class="line">0.009</div><div class="line">0.009</div></pre></td></tr></table></figure>
+
+
+--------------------------------------------------------------
+Results computed with the **unofficial** Python eval code.
+Results should be very close to the official MATLAB eval code.
+Recompute with `./tools/reval.py --matlab ...` for your paper.
+-- Thanks, The Management
+--------------------------------------------------------------
+
+real    1m43.822s
+user    1m25.764s
+sys    0m15.516s
+</code></pre><h3 id="五-测试训练结果"><a href="#五-测试训练结果" class="headerlink" title="(五)测试训练结果"></a>(五)测试训练结果</h3><h4 id="1-修改py-faster-rcnn-tools-demo-py"><a href="#1-修改py-faster-rcnn-tools-demo-py" class="headerlink" title="(1)修改py-faster-rcnn\tools\demo.py"></a>(1)修改py-faster-rcnn\tools\demo.py</h4><pre><code>CLASSES = (&apos;__background__&apos;,
+         &apos;你的标签1&apos;,&apos;你的标签2&apos;,你的标签3&apos;,&apos;你的标签4&apos;)
+
+NETS = {&apos;vgg16&apos;: (&apos;VGG16&apos;,
+                  &apos;VGG16_faster_rcnn_final.caffemodel&apos;),
+        &apos;zf&apos;: (&apos;ZF&apos;,
+                  &apos;ZF_faster_rcnn_final.caffemodel&apos;)}
+
+im_names = os.listdir(os.path.join(cfg.DATA_DIR, &apos;demo&apos;))  
+</code></pre><h4 id="2-放置模型及测试图片"><a href="#2-放置模型及测试图片" class="headerlink" title="(2)放置模型及测试图片"></a>(2)放置模型及测试图片</h4><pre><code>将训练得到的py-faster-rcnn\output\faster_rcnn_alt_opt\***_trainval中
+ZF的final.caffemodel拷贝至py-faster-rcnn\data\faster_rcnn_models
+
+测试图片放在py-faster-rcnn\data\demo(与上面demo.py设置路径有关,可修改)
+</code></pre><h4 id="3-进行测试"><a href="#3-进行测试" class="headerlink" title="(3)进行测试"></a>(3)进行测试</h4><pre><code>cd $FRCN_ROOT
+./tool/demo.py
+</code></pre><h2 id="四-曾出现过的bug及当时的解决方法"><a href="#四-曾出现过的bug及当时的解决方法" class="headerlink" title="四. 曾出现过的bug及当时的解决方法"></a>四. 曾出现过的bug及当时的解决方法</h2><p>(1) 训练时出现KeyError:’max_overlaps’  ,解决方法:删除data文件夹下的cache文件夹</p>
+<p>(2) 训练结束后测试时出现类似</p>
+<pre><code>File &quot;/home/hyzhan/py-faster-rcnn/tools/../lib/datasets/voc_eval.py&quot;, line 126, in voc_eval
+    R = [obj for obj in recs[imagename] if obj[&apos;name&apos;] == classname]
+KeyError: &apos;000002&apos;
+</code></pre><p>解决方法: 删除data/VOCdekit2007下的annotations_cache文件夹</p>
+<p>(3) caffe-fast-rcnn编译时出现找不到nvcc命令的情况,解决方法:</p>
+<pre><code>export PATH=/usr/local/cuda-8.0/bin:$PATH
+export LD_LIBRARY_PATH=/usr/local/cuda-8.0/lib64:$LD_LIBRARY_PATH
+</code></pre><p>将cuda安装路径添加到环境变量中</p>
+<p>(4) caffe-fast-rcnn编译时出现类似找不到opencv命令的情况,解决方法,添加环境变量:</p>
+<pre><code>export LD_LIBRARY_PATH=/home/hyzhan/software/opencv3/lib:$LD_LIBRARY_PATH
+</code></pre><p>(5) 训练的时候执行”./experiments/scripts/faster_rcnn_alt_opt.sh 0 ZF pascal_voc”语句进行训练会出现找不到faster_rcnn_alt_opt.sh文件的情况,解决方法:重新手打命令</p>
+<p>(6) 测试之前需要修改tool文件夹下的demo或者mydemo里面的class类别,不然会显示上次训练的类别</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/python/" rel="tag"># python</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/02/08/2017-02-08-制作自己的图片数据集/" rel="prev" title="制作自己的图片数据集(VOC2007格式)">
+                制作自己的图片数据集(VOC2007格式) <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="hyzhan" />
+          <p class="site-author-name" itemprop="name">hyzhan</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">4</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              
+                <span class="site-state-item-count">1</span>
+                <span class="site-state-item-name">分类</span>
+              
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#一-配置caffe环境"><span class="nav-number">1.</span> <span class="nav-text">一. 配置caffe环境</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二-下载-编译及测试py-faster-rcnn源码"><span class="nav-number">2.</span> <span class="nav-text">二. 下载,编译及测试py-faster-rcnn源码</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#一-下载源码"><span class="nav-number">2.1.</span> <span class="nav-text">(一)下载源码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#二-编译源码"><span class="nav-number">2.2.</span> <span class="nav-text">(二)编译源码</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-编译Cython模块"><span class="nav-number">2.2.1.</span> <span class="nav-text">(1)编译Cython模块</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-修改Markfile配置"><span class="nav-number">2.2.2.</span> <span class="nav-text">(2)修改Markfile配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-编译python接口"><span class="nav-number">2.2.3.</span> <span class="nav-text">(3)编译python接口</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-下载训练好的VGG16和ZF模型"><span class="nav-number">2.2.4.</span> <span class="nav-text">(4)下载训练好的VGG16和ZF模型</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#三-测试源码"><span class="nav-number">2.3.</span> <span class="nav-text">(三)测试源码</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三-使用faster-rcnn训练自己的数据集"><span class="nav-number">3.</span> <span class="nav-text">三. 使用faster-rcnn训练自己的数据集</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#一-下载预训练参数及模型"><span class="nav-number">3.1.</span> <span class="nav-text">(一)下载预训练参数及模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#二-制作数据集"><span class="nav-number">3.2.</span> <span class="nav-text">(二)制作数据集</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#三-修改配置文件"><span class="nav-number">3.3.</span> <span class="nav-text">(三)修改配置文件</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-修改py-faster-rcnn-models-pascal-voc-ZF-faster-rcnn-alt-opt-stage1-fast-rcnn-train-pt和stage2-fast-rcnn-train-pt-两个文件"><span class="nav-number">3.3.1.</span> <span class="nav-text">(1)修改py-faster-rcnn/models/pascal_voc/ZF/faster_rcnn_alt_opt/stage1_fast_rcnn_train.pt和stage2_fast_rcnn_train.pt 两个文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-修改py-faster-rcnn-models-pascal-voc-ZF-faster-rcnn-alt-opt-stage1-rpn-train-pt和stage2-rpn-train-pt-两个文件"><span class="nav-number">3.3.2.</span> <span class="nav-text">(2)修改py-faster-rcnn/models/pascal_voc/ZF/faster_rcnn_alt_opt/stage1_rpn_train.pt和stage2_rpn_train.pt 两个文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-修改py-faster-rcnn-models-pascal-voc-ZF-faster-rcnn-alt-opt-faster-rcnn-test-pt文件"><span class="nav-number">3.3.3.</span> <span class="nav-text">(3)修改py-faster-rcnn/models/pascal_voc/ZF/faster_rcnn_alt_opt/faster_rcnn_test.pt文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-修改py-faster-rcnn-lib-datasets-pascal-voc-py"><span class="nav-number">3.3.4.</span> <span class="nav-text">(4)修改py-faster-rcnn/lib/datasets/pascal_voc.py</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-py-faster-rcnn-lib-datasets-imdb-py修改"><span class="nav-number">3.3.5.</span> <span class="nav-text">(4)py-faster-rcnn/lib/datasets/imdb.py修改</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#5-py-faster-rcnn-tools-train-faster-rcnn-alt-opt-py修改迭代次数（建议修改）"><span class="nav-number">3.3.6.</span> <span class="nav-text">(5)py-faster-rcnn/tools/train_faster_rcnn_alt_opt.py修改迭代次数（建议修改）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#6-删除缓存文件-每次修改配置文件后训练都要做"><span class="nav-number">3.3.7.</span> <span class="nav-text">(6)删除缓存文件(每次修改配置文件后训练都要做)</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#四-开始训练"><span class="nav-number">3.4.</span> <span class="nav-text">(四)开始训练</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#五-测试训练结果"><span class="nav-number">3.5.</span> <span class="nav-text">(五)测试训练结果</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-修改py-faster-rcnn-tools-demo-py"><span class="nav-number">3.5.1.</span> <span class="nav-text">(1)修改py-faster-rcnn\tools\demo.py</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-放置模型及测试图片"><span class="nav-number">3.5.2.</span> <span class="nav-text">(2)放置模型及测试图片</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-进行测试"><span class="nav-number">3.5.3.</span> <span class="nav-text">(3)进行测试</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#四-曾出现过的bug及当时的解决方法"><span class="nav-number">4.</span> <span class="nav-text">四. 曾出现过的bug及当时的解决方法</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">hyzhan</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,784 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="YOLOv2," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="用YOLOv2训练自己的数据集">
+<meta name="keywords" content="YOLOv2">
+<meta property="og:type" content="article">
+<meta property="og:title" content="用YOLOv2训练自己的数据集">
+<meta property="og:url" content="http://hyzhan.github.io/2017/02/07/2017-02-07-用YOLOv2训练自己的数据集/index.html">
+<meta property="og:site_name" content="hyzhan">
+<meta property="og:description" content="用YOLOv2训练自己的数据集">
+<meta property="og:updated_time" content="2017-04-18T05:45:39.187Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="用YOLOv2训练自己的数据集">
+<meta name="twitter:description" content="用YOLOv2训练自己的数据集">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"hide","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://hyzhan.github.io/2017/02/07/2017-02-07-用YOLOv2训练自己的数据集/"/>
+
+
+
+
+
+  <title> 用YOLOv2训练自己的数据集 | hyzhan </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">hyzhan</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://hyzhan.github.io/2017/02/07/2017-02-07-用YOLOv2训练自己的数据集/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="hyzhan">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="hyzhan">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                用YOLOv2训练自己的数据集
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-02-07T17:42:00+08:00">
+                2017-02-07
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/deep-learning/" itemprop="url" rel="index">
+                    <span itemprop="name">deep learning</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+              <div class="post-description">
+                  用YOLOv2训练自己的数据集
+              </div>
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="一-系统初始环境"><a href="#一-系统初始环境" class="headerlink" title="一. 系统初始环境"></a>一. 系统初始环境</h2><a id="more"></a>
+<p><strong>系统:Ubuntu16.04</strong>:  ubuntu-16.04-desktop-amd64.iso<br></p>
+<p><strong>cuda安装文件</strong>: cuda-repo-ubuntu1604-8-0-local_8.0.44-1_amd64.deb.44-1_amd64-deb,下载链接<a href="https://developer.nvidia.com/cuda-downloads" target="_blank" rel="external">点击</a>, linux-x86架构-ubuntu-16.04-deb(local) <br><br><strong>cudnn安装文件</strong>: cudnn-8.0-linux-x64-v5.0-ga.solitairetheme8,下载链接<a href="https://developer.nvidia.com/cudnn" target="_blank" rel="external">点击</a>, 适用cuda8.0有5.1和5.0版,这里用5.0版,区别应该不大 <br><br><strong>caffe源代码</strong>: <a href="https://github.com/BVLC/caffe" target="_blank" rel="external">github链接</a> ,或者运行git clone <a href="https://github.com/BVLC/caffe.git" target="_blank" rel="external">https://github.com/BVLC/caffe.git</a> <br></p>
+<p><strong>安装过程</strong>：<a href="http://report.opsauto.cn/deep%20learning/2016/11/12/ubunt16.04%E4%B8%8Bcaffe%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85.html" target="_blank" rel="external">点击这里</a></p>
+<h2 id="二-初始化YOLO-v2版本"><a href="#二-初始化YOLO-v2版本" class="headerlink" title="二. 初始化YOLO(v2版本)"></a>二. 初始化YOLO(v2版本)</h2><ol>
+<li>git clone <a href="https://github.com/pjreddie/darknet" target="_blank" rel="external">https://github.com/pjreddie/darknet</a></li>
+<li>cd darknet</li>
+<li>make<br>注意默认Markfile是没有开启GPU模式的，需要适当修改：<br>GPU=1<br>CUDNN=1<br>OPENCV=1</li>
+</ol>
+<p>开启OPENCV=1后编译可能出现找不到lippicv的情况，笔者是将/usr/local/share/OpenCV/3rdparty/lib 里面的libippicv.a文件复制到/usr/lib解决的，因为使用OPENCV=0后编译后训练时无法通过stb_image.h导入图像</p>
+<h2 id="三-测试YOLO"><a href="#三-测试YOLO" class="headerlink" title="三. 测试YOLO"></a>三. 测试YOLO</h2><ol>
+<li>下载训练好的权重 wget <a href="http://pjreddie.com/media/files/yolo.weights" target="_blank" rel="external">http://pjreddie.com/media/files/yolo.weights</a></li>
+<li>进行测试 ./darknet detect cfg/yolo.cfg yolo.weights data/dog.jpg</li>
+</ol>
+<h2 id="三-训练自己的数据"><a href="#三-训练自己的数据" class="headerlink" title="三. 训练自己的数据"></a>三. 训练自己的数据</h2><h4 id="一-准备数据集"><a href="#一-准备数据集" class="headerlink" title="(一).准备数据集"></a>(一).准备数据集</h4><ol>
+<li>制作数据集，将图片制作成VOC2007格式</li>
+<li>把数据集放在darknet/script中，数据集结构为VOCdevkit/VOC2007/*，如果需要改动数据集位置或名称，需要同时修改voc_label.py里面对应的文件路径 </li>
+<li>修改voc_label.py中的classes变成自己需要的类别名称</li>
+<li>运行voc_label.py</li>
+<li>可选 sudo cat 2007_train.txt 2007_val.txt &gt; train.txt</li>
+</ol>
+<h4 id="二-修改配置"><a href="#二-修改配置" class="headerlink" title="(二).修改配置"></a>(二).修改配置</h4><ol>
+<li>修改data/voc.names里面的类别为自己需要的类别名称</li>
+<li>修改cfg/voc.data文件<blockquote>
+<p>classes= 20</p>
+</blockquote>
+</li>
+</ol>
+<blockquote>
+<p>train  = 对应路径/train.txt</p>
+<p>valid  = 对应路径/2007_test.txt</p>
+<p>names = data/voc.names</p>
+<p>backup = 对应路径/backup</p>
+</blockquote>
+<ol>
+<li><p>修改src/yolo_kernel.cu文件</p>
+<blockquote>
+<p>约行62：draw_detections(det, l.side<em>l.side</em>l.n, demo_thresh, boxes, probs, voc_names, voc_labels, 你的类别数);</p>
+</blockquote>
+</li>
+<li><p>cfg/tiny-yolo-voc.cfg文件（也可复制重命名为其他，如my.cfg）</p>
+<blockquote>
+<p>学习率 learning_rate=0.001</p>
+</blockquote>
+</li>
+</ol>
+<blockquote>
+<p>最大迭代次数 max_batches = 1001（测试时可以调低一些，100次迭代需要8分钟左右，迭代次数太少训练出来的权重可能看不到测试效果）</p>
+</blockquote>
+<p>[convolutional]</p>
+<p>size=1</p>
+<p>stride=1</p>
+<p>pad=1</p>
+<p>filters=35  #filters=（classes+coords+1）*5</p>
+<p>activation=linear</p>
+<p>[region]</p>
+<p>anchors = 1.08,1.19,  3.42,4.41,  6.63,11.38,  9.42,5.11,  16.62,10.52</p>
+<p>bias_match=1</p>
+<p>classes=2  #你的类别数</p>
+<p>coords=4</p>
+<p>num=5</p>
+<p>softmax=1</p>
+<p>jitter=.2</p>
+<p>rescore=1</p>
+<h4 id="三-训练"><a href="#三-训练" class="headerlink" title="(三).训练"></a>(三).训练</h4><ol>
+<li>下载预训练模型 <blockquote>
+<p>curl -O <a href="http://pjreddie.com/media/files/darknet19_448.conv.23" target="_blank" rel="external">http://pjreddie.com/media/files/darknet19_448.conv.23</a></p>
+</blockquote>
+</li>
+<li>开始训练<blockquote>
+<p>./darknet detector train cfg/voc.data cfg/my.cfg darknet19_448.conv.23</p>
+</blockquote>
+</li>
+</ol>
+<h2 id="四-测试训练模型效果"><a href="#四-测试训练模型效果" class="headerlink" title="四. 测试训练模型效果"></a>四. 测试训练模型效果</h2><blockquote>
+<p>./darknet detector test cfg/voc.data cfg/my.cfg 你的backup目录/my_final.weights data/测试图片.jpg<br>命令行后接-thresh 0.05可调整置信度阈值</p>
+</blockquote>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/YOLOv2/" rel="tag"># YOLOv2</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/02/08/2017-02-08-制作自己的图片数据集/" rel="next" title="制作自己的图片数据集(VOC2007格式)">
+                <i class="fa fa-chevron-left"></i> 制作自己的图片数据集(VOC2007格式)
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/11/11/2016-11-11-ubunt16.04下caffe环境安装/" rel="prev" title="ubunt16.04下caffe环境安装">
+                ubunt16.04下caffe环境安装 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="hyzhan" />
+          <p class="site-author-name" itemprop="name">hyzhan</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">4</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              
+                <span class="site-state-item-count">1</span>
+                <span class="site-state-item-name">分类</span>
+              
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#一-系统初始环境"><span class="nav-number">1.</span> <span class="nav-text">一. 系统初始环境</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二-初始化YOLO-v2版本"><span class="nav-number">2.</span> <span class="nav-text">二. 初始化YOLO(v2版本)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三-测试YOLO"><span class="nav-number">3.</span> <span class="nav-text">三. 测试YOLO</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三-训练自己的数据"><span class="nav-number">4.</span> <span class="nav-text">三. 训练自己的数据</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#一-准备数据集"><span class="nav-number">4.0.1.</span> <span class="nav-text">(一).准备数据集</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#二-修改配置"><span class="nav-number">4.0.2.</span> <span class="nav-text">(二).修改配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#三-训练"><span class="nav-number">4.0.3.</span> <span class="nav-text">(三).训练</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#四-测试训练模型效果"><span class="nav-number">5.</span> <span class="nav-text">四. 测试训练模型效果</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">hyzhan</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
