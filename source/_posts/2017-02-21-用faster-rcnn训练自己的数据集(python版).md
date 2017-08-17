@@ -13,7 +13,7 @@ tags: [python]
 
 ## 一. 配置caffe环境
 
-[ubunt16.04下caffe环境安装](http://report.opsauto.cn/deep%20learning/2016/11/12/ubunt16.04%E4%B8%8Bcaffe%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85.html)
+[ubunt16.04下caffe环境安装](https://hyzhan.github.io/2016/11/11/2016-11-11-ubunt16.04%E4%B8%8Bcaffe%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85/)
 
 ## 二. 下载,编译及测试py-faster-rcnn源码
 
@@ -35,7 +35,7 @@ tags: [python]
 	make
 
 #### (2)修改Markfile配置
-参考[ubunt16.04下caffe环境安装](http://report.opsauto.cn/deep%20learning/2016/11/12/ubunt16.04%E4%B8%8Bcaffe%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85.html)
+参考[ubunt16.04下caffe环境安装](https://hyzhan.github.io/2016/11/11/2016-11-11-ubunt16.04%E4%B8%8Bcaffe%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85/)
 中修改Makefile.config
 
 #### (3)编译python接口
@@ -66,7 +66,7 @@ tags: [python]
 
 ### (二)制作数据集
 
-[制作数据集(VOC2007格式)](http://report.opsauto.cn/deep%20learning/2017/02/08/%E5%88%B6%E4%BD%9C%E8%87%AA%E5%B7%B1%E7%9A%84%E5%9B%BE%E7%89%87%E6%95%B0%E6%8D%AE%E9%9B%86.html)
+[制作数据集(VOC2007格式)](https://hyzhan.github.io/2017/02/08/2017-02-08-%E5%88%B6%E4%BD%9C%E8%87%AA%E5%B7%B1%E7%9A%84%E5%9B%BE%E7%89%87%E6%95%B0%E6%8D%AE%E9%9B%86/)
 
 将制作好的VOC2007文件夹放置在data/VOCdevkit2007文件夹下,没有则新建VOCdevkit2007文件夹
 
